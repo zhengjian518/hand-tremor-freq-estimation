@@ -74,7 +74,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			video_code = video_path.split('/')[5]# 3(T008), 4(All)
 			video_name = video_path.split('/')[6]# 4      , 5
 			print 'Video {}_{} in process'.format(video_code,video_name)
-			result_save_path = '../Top_neus_joint_tfd/' + video_code +'_tfd/'
+			result_save_path = '../Top_neus_joint_tfd_{}/'.format(window_size) + video_code +'_tfd/'
 			if not os.path.isdir(result_save_path):
 				os.makedirs(result_save_path)
 
@@ -105,7 +105,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 
 		# read in the joint data(conf_maps and position estimation) on Silvia's PC
 		conf_arr_list = []
-		conf_arr_path = '../results/' + video_code + '_crop' +'/'+video_name+'/'+'conf_arr/' + joint_name + '/'
+		conf_arr_path = '/local/guest/pose_data/results/' + video_code + '_crop' +'/'+video_name+'/'+'conf_arr/' + joint_name + '/'
 		conf_arr_fullpath_list = util.get_file_fullpath_list(conf_arr_path,file_format='bin')
 		# conf_arr_fullpath_list = util.get_file_fullpath_list(conf_arr_path,file_format='txt')
 		conf_arr_fullpath_list = sorted(conf_arr_fullpath_list,key=lambda x: (int(re.sub('\D','',x)),x))
@@ -124,7 +124,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 
 			# pos_arr = np.genfromtxt(pos_arr_fullpath_list[conf_arr_index],dtype=float)
 			# pos_arr_list.append(pos_arr[4])
-		cpm_joint_path = '../results/' + video_code + '_crop' +'/'+video_name+'/'+'prediction_arr/'
+		cpm_joint_path = '/local/guest/pose_data/results/' + video_code + '_crop' +'/'+video_name+'/'+'prediction_arr/'
 		print cpm_joint_path
 		pos_arr_list = util.get_jonit_pos_sequence(cpm_joint_path,JOINT_LIST[0],type="cpm")
 		print len(pos_arr_list)
@@ -337,15 +337,15 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 				# else:
 				# 	psd_avg[phase_index] += weighted_fft_sequence
 
-				#plot_to_file(x=freq_series,y=weighted_fft_sequence,
-				#		xlabel='Frequency (Hz)',
-				#		ylabel='Power Spectral Density',
-				#		title='Accumulated PSD of {}, count: {}, phase_pos: {}, time: {:.1f} (s)'.format(
-				#									joints_string[0],fft_count,phase_index,
-				#									float((fft_count+1)*\
-				#									window_size)/2.0/30.0),
-				#		save_path=psd_save_path+'apsd_{}_{}_p{}.eps'.format(
-				#						joints_string[0],fft_count,phase_index))
+				plot_to_file(x=freq_series,y=weighted_fft_sequence,
+						xlabel='Frequency (Hz)',
+						ylabel='Power Spectral Density',
+						title='Accumulated PSD of {}, count: {}, phase_pos: {}, time: {:.1f} (s)'.format(
+													joints_string[0],fft_count,phase_index,
+													float((fft_count+1)*\
+													window_size)/2.0/30.0),
+						save_path=psd_save_path+'apsd_{}_{}_p{}.eps'.format(
+										joints_string[0],fft_count,phase_index))
 
 				freq_i = freq_series[np.argmax(weighted_fft_sequence)]
 				if phase_index ==0:
@@ -467,12 +467,12 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 		for phase_index in range(len(psd_avg)):
 			if peak_count[phase_index] > 0:
 				psd_avg[phase_index] = psd_avg[phase_index]/psd_avg[phase_index].max()  # normalization
-				#plot_to_file(x=freq_series,y=np.array(psd_avg[phase_index]),
-				#			xlabel='Frequency (Hz)',ylabel='Power Spectral Density',
-				#			title=' Average PSD of {}_P_{}'.format( \
-				#											joints_string[0],phase_index),
-				#			save_path=psd_save_path+'avgpsd_{}_P_{}.eps'.format( \
-				#											joints_string[0],phase_index))
+				plot_to_file(x=freq_series,y=np.array(psd_avg[phase_index]),
+							xlabel='Frequency (Hz)',ylabel='Power Spectral Density',
+							title=' Average PSD of {}_P_{}'.format( \
+															joints_string[0],phase_index),
+							save_path=psd_save_path+'avgpsd_{}_P_{}.eps'.format( \
+															joints_string[0],phase_index))
 			else:
 				pass
 
@@ -493,12 +493,12 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 				# psd_avg_scale_level.append(psd_avg[index]) # this sum now, take average in plot by div total fft_count
 			legend = ['no_phase','scl{}_ori_0'.format(scale),'scl{}_ori_pi/4'.format(scale),\
 						'scl{}_ori_pi/2'.format(scale),'scl{}_ori_3pi/4'.format(scale)]
-			#n_plot_to_file(run_time = peak_count[phase_index],x=freq_series,y_list=psd_avg_scale_level,\
-			#				xlabel='Frequency (Hz)', ylabel='Power Spectral Density',\
-			#				legends = legend,title=' Average PSD of {}_scl{}'.format( \
-			#											joints_string[0],scale),\
-			#				plot_path=psd_save_path+'avgpsd_{}_scl{}.eps'.format( \
-			#											joints_string[0],scale))
+			n_plot_to_file(run_time = peak_count[phase_index],x=freq_series,y_list=psd_avg_scale_level,\
+							xlabel='Frequency (Hz)', ylabel='Power Spectral Density',\
+							legends = legend,title=' Average PSD of {}_scl{}'.format( \
+														joints_string[0],scale),\
+							plot_path=psd_save_path+'avgpsd_{}_scl{}.eps'.format( \
+														joints_string[0],scale))
 		# write file is_peak_overall.csv
 		print 'writting results into file : is_peak_overall_{}.csv'.format(joints_string[0])
 		csvwriter_ispeak_head =['Phase', 'is_peak', 'freq', 'fall']
@@ -674,15 +674,12 @@ if __name__ == "__main__":
 	video_path_list ,window_size_list, joint_list = [],[],[]
 	for i in range(0,len(folders)):
 		# video_path = folders[i]+ 'segment_img/Rwri/joint_video.avi'
-		if 'T042_Rechts_crop' in folders[i]:
-			print ("skip T042_Rechts_crop")
-			continue
 		if "Rechts" in folders[i]:
 			video_path = folders[i]+ 'Top_neus_links/' + 'kinect.avi'
 			if os.path.isfile(video_path):
 				video_path_list.append(video_path)
 				joint_list.append([4])
-				window_size_list.append(31)
+				window_size_list.append(61)
 			else:
 				pass
 		else:
@@ -690,7 +687,7 @@ if __name__ == "__main__":
 			if os.path.isfile(video_path):
 				video_path_list.append(video_path)
 				joint_list.append([7])
-				window_size_list.append(31)
+				window_size_list.append(61)
 			else:
 				pass
 

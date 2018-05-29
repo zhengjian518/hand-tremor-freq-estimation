@@ -125,9 +125,9 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			# pos_arr = np.genfromtxt(pos_arr_fullpath_list[conf_arr_index],dtype=float)
 			# pos_arr_list.append(pos_arr[4])
 		cpm_joint_path = '/local/guest/pose_data/results/' + video_code + '_crop' +'/'+video_name+'/'+'prediction_arr/'
-		print cpm_joint_path
+
 		pos_arr_list = util.get_jonit_pos_sequence(cpm_joint_path,JOINT_LIST[0],type="cpm")
-		print len(pos_arr_list)
+
 		# Init a kalman filter object
 		start_pos = np.array([[pos_arr_list[0][0]],[0.]])
 		kfObj = KFilter(start_pos)
@@ -140,7 +140,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 
 		pos_for_crop = list()
 		# Smooth the Y pos for all frames
-		print len(pos_arr_list)
+
 		for frame_i in range(0,len(pos_arr_list)):
 			pred_y = pos_arr_list[frame_i][0]
 			pred_x = pos_arr_list[frame_i][1]
@@ -165,7 +165,6 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 
 			frames = []
 			for frame_i in range(0,len(pos_arr_list)):
-				print frame_i,
 				[top,bottom] = [int(pos_for_crop[frame_i][0])-box_size,int(pos_for_crop[frame_i][0])+box_size]
 				[left,right] = [int(pos_for_crop[frame_i][1])-box_size,int(pos_for_crop[frame_i][1])+box_size]
 				# print [top,bottom],[left,right]

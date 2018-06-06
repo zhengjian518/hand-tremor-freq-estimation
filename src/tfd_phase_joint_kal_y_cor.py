@@ -74,19 +74,19 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			video_code = video_path.split('/')[5]# 3(T008), 4(All)
 			video_name = video_path.split('/')[6]# 4      , 5
 			print 'Video {}_{} in process'.format(video_code,video_name)
-			result_save_path = '../Top_neus_joint_tfd_{}/'.format(window_size) + video_code +'_tfd/'
+			result_save_path = '../{}_joint_tfd_{}/'.format(video_name,window_size) + video_code +'_tfd/'
 			if not os.path.isdir(result_save_path):
 				os.makedirs(result_save_path)
 
 			final_freq_csv_path = result_save_path + video_name + '_tfd_freq.csv'
 
 			TFD_PHASE_JOINT_KAL_Y_COR.tremor_freq_detec_phase(video_path,window_size,noverlap,\
-										final_freq_csv_path,joint_list[i])
+										final_freq_csv_path,joint_list[i],use_conf_map=False)
 
 	@staticmethod
 	def tremor_freq_detec_phase(video_path,window_size,noverlap, 
 							final_freq_csv_path,
-							JOINT_LIST):
+							JOINT_LIST,use_conf_map):
 		# Constant
 
 		stride = window_size - noverlap # 121- 60(121/2) = 61
@@ -118,10 +118,14 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 		# TODO: for new produced conf_map in Silvia's PC, not normalized
 		for conf_arr_index in range(0,len(conf_arr_fullpath_list)):
 			conf_arr = np.load(conf_arr_fullpath_list[conf_arr_index])
-			# conf_arr = np.genfromtxt(conf_arr_fullpath_list[conf_arr_index],dtype=None)
-			# conf_arr = [list(i) for i in conf_arr]
-			conf_arr_list.append(np.array(conf_arr)) # frames of elements in the list , each elem is a array
-
+			conf_arr = np.array(conf_arr)
+			if use_conf_map:
+				# conf_arr = np.genfromtxt(conf_arr_fullpath_list[conf_arr_index],dtype=None)
+				# conf_arr = [list(i) for i in conf_arr]
+				conf_arr_list.append(conf_arr) # frames of elements in the list , each elem is a array
+			else:
+				conf_arr = np.ones(conf_arr.shape,dtype=float)/sum(sum(conf_arr))
+				conf_arr_list.append(conf_arr)
 			# pos_arr = np.genfromtxt(pos_arr_fullpath_list[conf_arr_index],dtype=float)
 			# pos_arr_list.append(pos_arr[4])
 		cpm_joint_path = '/local/guest/pose_data/results/' + video_code + '_crop' +'/'+video_name+'/'+'prediction_arr/'
@@ -148,7 +152,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			pos_for_crop.append([int(predictedCoords[0][0]),pred_x])
 
 		print 'Trajectory smoothing is done.'
-		print len(pos_for_crop)
+
 		def fft(video_path,conf_arr_list):
 			
 			# fft_logger = Logger('fft_logger',level_name)
@@ -672,21 +676,22 @@ if __name__ == "__main__":
 	# folders = util.get_full_path_under_folder('../results/joint_data/T008_Rechts_crop/')
 	video_path_list ,window_size_list, joint_list = [],[],[]
 	for i in range(0,len(folders)):
+		video_path = folders[i]+ 'Top_neus_links/' + 'kinect.avi'
 		# video_path = folders[i]+ 'segment_img/Rwri/joint_video.avi'
 		if "Rechts" in folders[i]:
-			video_path = folders[i]+ 'Top_neus_links/' + 'kinect.avi'
+			# video_path = folders[i]+ 'Top_neus_links/' + 'kinect.avi'
 			if os.path.isfile(video_path):
 				video_path_list.append(video_path)
 				joint_list.append([4])
-				window_size_list.append(31)
+				window_size_list.append(61)
 			else:
 				pass
 		else:
-			video_path = folders[i]+ 'Top_neus_rechts/' + 'kinect.avi'
+			# video_path = folders[i]+ 'Top_neus_rechts/' + 'kinect.avi'
 			if os.path.isfile(video_path):
 				video_path_list.append(video_path)
 				joint_list.append([7])
-				window_size_list.append(31)
+				window_size_list.append(61)
 			else:
 				pass
 

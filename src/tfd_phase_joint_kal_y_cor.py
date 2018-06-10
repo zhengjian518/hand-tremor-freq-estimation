@@ -187,7 +187,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			joint_conf_maps = []
 			
 			# start number : (0,61,121,182,242,303, ...)
-			for i in range(0,int(video_fft.FRAME_COUNT/stride)-1):
+			for i in range(0,int(video_fft.FRAME_COUNT/stride)-2):
 			# for i in range(0,int(2)):
 				if not ((i+2)%2 == 0): # odd count 
 					f_start_number = stride + window_size*(i/2)

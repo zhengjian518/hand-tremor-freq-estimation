@@ -32,6 +32,8 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 	rgb_result = []
 	code_list = []
 	peak_mark = []
+	phase_accurate_count, rgb_accurate_count = 0,0
+
 	for code_idx in range(0,code_num):
 		patient_code = acc_full_path[code_idx].split('/')[5]
 		tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task,window_size) +patient_code + '_tfd/'+ 'freq_psd_txt/'
@@ -59,6 +61,14 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 			all_rgblines = np.loadtxt(rgbfreq_txt_path)
 			rgb_result.append(list(all_rgblines[-1,:])) # 2 columns
 
+			if abs(all_phaselines[-1,:][1] - all_acclines[-1,:][1]) <= 1:
+				phase_accurate_count +=1
+			if abs(all_rgblines[-1,:][1] - all_acclines[-1,:][1]) <= 1:
+				rgb_accurate_count += 1
+
+	codes_length = len(code_list) # how many patients have this task, and detected periodic
+
+
 	# step 2
 	# calculate abs error
 	# abs_err_phase = list(map(operator.sub, np.array(phase_result)[:,1], np.array(acc_result)[:,1]))
@@ -66,6 +76,7 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 
 	abs_err_phase = list( map(abs,map(operator.sub, np.array(phase_result)[:,1], np.array(acc_result)[:,1])))
 	abs_err_rgb = list( map(abs,map(operator.sub, np.array(rgb_result)[:,1], np.array(acc_result)[:,1])))
+	
 
 	mean_err_phase = sum(list(map(abs,abs_err_phase)))/len(abs_err_phase)
 	mean_err_rgb = sum(list(map(abs,abs_err_rgb)))/len(abs_err_rgb)
@@ -99,7 +110,7 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 	fig.tight_layout()
 	fig.savefig('/local/guest/joint_postion/tremor-freq-detection/error_analysis/plots/'+ '{}.pdf'.format(task))
 
-	return mean_err_phase, mean_err_rgb
+	return codes_length, phase_accurate_count, rgb_accurate_count, mean_err_phase, mean_err_rgb
 
 def write_baseline_to_csv(acc_result_path):
 	
@@ -220,13 +231,55 @@ if __name__ == "__main__":
 	
 	phase = []
 	rgb = []
+	total_length, phase_accurate_length, rgb_accurate_length = [], [], []
 	for task in task_list:
 		print 'error analysis on task {}'.format(task)
 		row = []
-		mean_err_phase,mean_err_rgb = task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_size)
+		codes_length, phase_accurate_count, rgb_accurate_count, mean_err_phase, mean_err_rgb =\
+					 task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_size)
 		row = [task,mean_err_phase,mean_err_rgb]
 		me_csvwriter.writerow(row)
+		total_length.append(codes_length) 
+		phase_accurate_length.append(phase_accurate_count)
+		rgb_accurate_length.append(rgb_accurate_count)
 		phase.append(mean_err_phase)
 		rgb.append(mean_err_rgb)
+
 	del me_csvwriter
 	print sum(phase)/len(phase),sum(rgb)/len(rgb)
+
+	fig, ax = plt.subplots()
+
+	index = np.arange(len(task_list))
+	bar_width = 0.35
+
+	opacity = 0.4
+	error_config = {'ecolor': '0.3'}
+
+	rects1 = ax.bar(index, total_length, bar_width,
+	                alpha=opacity, color='g',
+	                error_kw=error_config,
+	                label='total_length')
+
+	rects2 = ax.bar(index + bar_width, phase_accurate_length, bar_width,
+	                alpha=opacity, color='r',
+	                error_kw=error_config,
+	                label='phase_accurate_length')
+
+	rects3 = ax.bar(index + 2*bar_width, rgb_accurate_length, bar_width,
+	                alpha=opacity, color='r',
+	                error_kw=error_config,
+	                label='rgb_accurate_length')
+
+	ax.set_xlabel('Task Name')
+	ax.set_ylabel('Accurate Number')
+	ax.set_title('Accurate Number For All Tasks (Err < 1 HZ)')
+	ax.set_xticks(index + 3*bar_width/2)
+	plt.xticks(rotation=60)
+	ax.set_xticklabels(task_list)
+	ax.legend()
+
+	fig.tight_layout()
+	fig.savefig('/local/guest/joint_postion/tremor-freq-detection/error_analysis/plots/'+ 'acc_num_per_task.pdf'
+
+

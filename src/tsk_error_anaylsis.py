@@ -145,8 +145,8 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 	patient_codes = patient_codes[1:] # remove folder CSVs/
 	# codes_num = len(patient_codes)
 
-	peak_count_csv = csv_folder + 'all_tasks_peak_count.csv'
-	peak_count_csvfile = open(csv_save_path, 'wb')
+	peak_count_csv_path = csv_folder + 'all_tasks_peak_count.csv'
+	peak_count_csvfile = open(peak_count_csv_path, 'wb')
 	pc_csvwriter = csv.writer(peak_count_csvfile)
 	pc_csvwriter_head = ['Task','Total_num','Acc_peak_count','Phase_peak_count','Rgb_peak_count']
 	pc_csvwriter.writerow(pc_csvwriter_head)

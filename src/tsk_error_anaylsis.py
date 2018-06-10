@@ -124,7 +124,7 @@ def write_baseline_to_csv(acc_result_path):
 			csvwriter.writerow(row)
 		del csvwriter
 
-def write_tfd_to_csv(tfd_result_path,acc_result_path,window_size):
+def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 	"""
 	start from every task
 	"""
@@ -186,4 +186,4 @@ if __name__ == "__main__":
 
 	# write_baseline_to_csv(acc_result_path)
 
-	write_tfd_to_csv(tfd_result_path,acc_result_path,window_size):
+	write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):

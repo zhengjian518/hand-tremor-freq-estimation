@@ -143,7 +143,7 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 		patient_codes.append(code)
 
 	patient_codes = patient_codes[1:] # remove folder CSVs/
-
+	print patient_codes
 	for task_path in tasks_path:
 		task_name = task_path.split('/')[6]
 		task_name = re.sub('_joint_tfd_61','',task_name)
@@ -155,7 +155,7 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 
 		for code in patient_codes:
 			acc_path = acc_result_path + code + '/' + task_name + '/freq.txt'
-			
+			print acc_path
 			if not os.path.isfile(acc_path):
 				continue
 			tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task_name,window_size) +code + '_tfd/'+ 'freq_psd_txt/'

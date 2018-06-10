@@ -66,9 +66,6 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 	mean_err_phase = sum(list(map(abs,abs_err_phase)))/len(abs_err_phase)
 	mean_err_rgb = sum(list(map(abs,abs_err_rgb)))/len(abs_err_rgb)
 
-	print mean_err_phase,mean_err_rgb
-	print ((mean_err_rgb-mean_err_phase)/mean_err_rgb)
-
 	fig, ax = plt.subplots()
 
 	index = np.arange(len(code_list))
@@ -97,6 +94,8 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 
 	fig.tight_layout()
 	fig.savefig('/local/guest/joint_postion/tremor-freq-detection/error_analysis/plots/'+ '{}.pdf'.format(task))
+
+	return mean_err_phase, mean_err_rgb
 
 def write_baseline_to_csv(acc_result_path):
 	
@@ -197,16 +196,32 @@ if __name__ == "__main__":
 
 	acc_result_path = '/local/guest/benchmark_acc/baseline_win61/'
 	tfd_result_path = '/local/guest/joint_postion/tremor-freq-detection/result/'
-	# # task = '100-7'
-	# # task = 'Rust'
-	# task_list = ['100-7','2_hz_lager','2_hz_hoger','Duimen_omhoog','Fingertap','Handen_in_pronatie',\
-	# 			'Maanden_terug','Pianospelen','Rust','Schrijven_links','Schrijven_rechts',\
-	# 			'Spiraal_links','Spiraal_rechts','Top_neus_links','Top_neus_rechts','Top-top','Volgen']
+	csv_folder = '/local/guest/joint_postion/tremor-freq-detection/error_analysis/CSVs/'
 	window_size = '61'
-	# for task in task_list:
-	# 	print 'error analysis on task {}'.format(task)
-	# 	task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_size)
 
 	# write_baseline_to_csv(acc_result_path)
+	# write_task_result_to_csv(tfd_result_path,acc_result_path,window_size)
 
-	write_task_result_to_csv(tfd_result_path,acc_result_path,window_size)
+	task_list = ['100-7','2_hz_lager','2_hz_hoger','Duimen_omhoog','Fingertap','Handen_in_pronatie',\
+				'Maanden_terug','Pianospelen','Rust','Schrijven_links','Schrijven_rechts',\
+				'Spiraal_links','Spiraal_rechts','Top_neus_links','Top_neus_rechts','Top-top','Volgen']
+
+	mean_err_per_task_csv_path = csv_folder + 'mean_err_per_task(only periodic).csv'
+	
+	mean_error_csvfile = open(mean_err_per_task_csv_path, 'wb')
+	me_csvwriter = csv.writer(mean_error_csvfile)
+	header = ['Task','Mean_err_phase','Mean_err_rgb']
+	me_csvwriter.writerow(header)
+	
+	phase = []
+	rgb = []
+	for task in task_list:
+		print 'error analysis on task {}'.format(task)
+		row = []
+		mean_err_phase,mean_err_rgb = task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_size)
+		row = [task,mean_err_phase,mean_err_rgb]
+		me_csvwriter.writerow(row)
+		phase.append(mean_err_phase)
+		rgb.append(mean_err_rgb)
+	del me_csvwriter
+	print sum(phase)/len(phase),sum(rgb)/len(rgb)

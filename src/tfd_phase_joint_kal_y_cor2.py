@@ -74,7 +74,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			video_code = video_path.split('/')[5]# 3(T008), 4(All)
 			video_name = video_path.split('/')[6]# 4      , 5
 			print 'Video {}_{} in process'.format(video_code,video_name)
-			result_save_path = '../{}_joint_tfd_{}/'.format(video_name,window_size) + video_code +'_tfd/'
+			result_save_path = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/students/jianzheng/tfd_result/{}_joint_tfd_{}/'.format(video_name,window_size) + video_code +'_tfd/'
 			if not os.path.isdir(result_save_path):
 				os.makedirs(result_save_path)
 
@@ -105,7 +105,8 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 
 		# read in the joint data(conf_maps and position estimation) on Silvia's PC
 		conf_arr_list = []
-		conf_arr_path = '/local/guest/pose_data/results/' + video_code + '_crop' +'/'+video_name+'/'+'conf_arr/' + joint_name + '/'
+		conf_arr_path = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/students/jianzheng/jointData/pathological-tremor-detection-from-video/results/' \
+							+ video_code + '_crop' +'/'+video_name+'/'+'conf_arr/' + joint_name + '/'
 		conf_arr_fullpath_list = util.get_file_fullpath_list(conf_arr_path,file_format='bin')
 		# conf_arr_fullpath_list = util.get_file_fullpath_list(conf_arr_path,file_format='txt')
 		conf_arr_fullpath_list = sorted(conf_arr_fullpath_list,key=lambda x: (int(re.sub('\D','',x)),x))
@@ -128,7 +129,8 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 				conf_arr_list.append(conf_arr)
 			# pos_arr = np.genfromtxt(pos_arr_fullpath_list[conf_arr_index],dtype=float)
 			# pos_arr_list.append(pos_arr[4])
-		cpm_joint_path = '/local/guest/pose_data/results/' + video_code + '_crop' +'/'+video_name+'/'+'prediction_arr/'
+		cpm_joint_path = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/students/jianzheng/jointData/pathological-tremor-detection-from-video/results/'\
+						 + video_code + '_crop' +'/'+video_name+'/'+'prediction_arr/'
 
 		pos_arr_list = util.get_jonit_pos_sequence(cpm_joint_path,JOINT_LIST[0],type="cpm")
 
@@ -671,12 +673,12 @@ if __name__ == "__main__":
 	fft_logger = Logger('fft_logger',level_name)
 	tfd_logger = Logger('tfd_logger',level_name)
 	
-	folders = util.get_full_path_under_folder('/media/tremor-data/TremorData_split/Tremor_data/')
+	folders = util.get_full_path_under_folder('/tudelft.net/staff-umbrella2/tremor data/Tremor_data/')
 	folders = sorted(folders,key=lambda x: (int(re.sub('\D','',x)),x))
 	# folders = util.get_full_path_under_folder('../results/joint_data/T008_Rechts_crop/')
 	video_path_list ,window_size_list, joint_list = [],[],[]
 	for i in range(0,len(folders)):
-		video_path = folders[i]+ '100-7/' + 'kinect.avi'
+		video_path = folders[i]+ '2_hz_lager/' + 'kinect.avi'
 		# video_path = folders[i]+ 'segment_img/Rwri/joint_video.avi'
 		if "Rechts" in folders[i]:
 			# video_path = folders[i]+ 'Top_neus_links/' + 'kinect.avi'
@@ -696,4 +698,3 @@ if __name__ == "__main__":
 				pass
 
 	tfd_phase_joint_kal_y_cor.tfd_batch_phase_clipped(video_path_list,window_size_list,joint_list)
-

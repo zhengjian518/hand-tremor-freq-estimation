@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('TkAgg')
 from video_in_frame import VideoInFrame
 from video import Video
 from io_video import IOVideo

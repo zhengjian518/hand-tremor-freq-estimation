@@ -253,29 +253,29 @@ if __name__ == "__main__":
 	index = np.arange(len(task_list))
 	bar_width = 0.35
 
-	opacity = 0.4
+	opacity = 0.5
 	error_config = {'ecolor': '0.3'}
 
 	rects1 = ax.bar(index, total_length, bar_width,
-	                alpha=opacity, color='g',
+	                alpha=opacity, color='b',
 	                error_kw=error_config,
-	                label='total_length')
+	                label='task_count')
 
 	rects2 = ax.bar(index + bar_width, phase_accurate_length, bar_width,
-	                alpha=opacity, color='r',
+	                alpha=opacity, color='g',
 	                error_kw=error_config,
-	                label='phase_accurate_length')
+	                label='phase_accurate_count')
 
 	rects3 = ax.bar(index + 2*bar_width, rgb_accurate_length, bar_width,
 	                alpha=opacity, color='r',
 	                error_kw=error_config,
-	                label='rgb_accurate_length')
+	                label='rgb_accurate_count')
 
 	ax.set_xlabel('Task Name')
 	ax.set_ylabel('Accurate Number')
-	ax.set_title('Accurate Number For All Tasks (Err < 1 HZ)')
-	ax.set_xticks(index + 3*bar_width/2)
-	plt.xticks(rotation=60)
+	ax.set_title('Accurate Number For All Tasks (Err < 1hz)')
+	ax.set_xticks(index + bar_width/2)
+	plt.xticks(rotation=90)
 	ax.set_xticklabels(task_list)
 	ax.legend()
 

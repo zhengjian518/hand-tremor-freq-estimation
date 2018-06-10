@@ -102,7 +102,7 @@ if __name__ == "__main__":
 	tfd_result_path = '/local/guest/joint_postion/tremor-freq-detection/result/'
 	# task = '100-7'
 	# task = 'Rust'
-	task_list = ['100-7','2_hz_lager','2 hz_hoger','Duimen_omhoog','Fingertap','Handen_in_pronatie',\
+	task_list = ['100-7','2_hz_lager','2_hz_hoger','Duimen_omhoog','Fingertap','Handen_in_pronatie',\
 				'Maanden_terug','Pianospelen','Rust','Schrijven_links','Schrijven_rechts',\
 				'Spiraal_links','Spiraal_rechts','Top_neus_links','Top_neus_rechts','Top-top','Volgen']
 	window_size = '61'

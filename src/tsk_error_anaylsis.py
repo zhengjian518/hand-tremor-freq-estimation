@@ -273,7 +273,7 @@ if __name__ == "__main__":
 
 	ax.set_xlabel('Task Name')
 	ax.set_ylabel('Accurate Number')
-	ax.set_title('Accurate Number For All Tasks (Err < 1hz)')
+	ax.set_title('Accurate Number For All Tasks (Abs_Err < 1hz)')
 	ax.set_xticks(index + bar_width/2)
 	plt.xticks(rotation=90)
 	ax.set_xticklabels(task_list)

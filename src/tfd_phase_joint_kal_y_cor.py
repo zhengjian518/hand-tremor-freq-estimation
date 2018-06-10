@@ -340,15 +340,15 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 				else:
 					psd_avg[phase_index] += weighted_fft_sequence
 
-				plot_to_file(x=freq_series,y=weighted_fft_sequence,
-						xlabel='Frequency (Hz)',
-						ylabel='Power Spectral Density',
-						title='Accumulated PSD of {}, count: {}, phase_pos: {}, time: {:.1f} (s)'.format(
-				 									joints_string[0],fft_count,phase_index,
-				 									float((fft_count+1)*\
-				 									window_size)/2.0/30.0),
-				 		save_path=psd_save_path+'apsd_{}_{}_p{}.eps'.format(
-				 						joints_string[0],fft_count,phase_index))
+				# plot_to_file(x=freq_series,y=weighted_fft_sequence,
+				# 		xlabel='Frequency (Hz)',
+				# 		ylabel='Power Spectral Density',
+				# 		title='Accumulated PSD of {}, count: {}, phase_pos: {}, time: {:.1f} (s)'.format(
+				#  									joints_string[0],fft_count,phase_index,
+				#  									float((fft_count+1)*\
+				#  									window_size)/2.0/30.0),
+				#  		save_path=psd_save_path+'apsd_{}_{}_p{}.eps'.format(
+				#  						joints_string[0],fft_count,phase_index))
 
 				freq_i = freq_series[np.argmax(weighted_fft_sequence)]
 				if phase_index ==0:
@@ -467,41 +467,41 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 		np.savetxt(freq_result_txt_path,freq_txt)
 
 		# plot psd_avg in all scale and phase levels
-		for phase_index in range(len(psd_avg)):
-			if peak_count[phase_index] > 0:
-				psd_avg[phase_index] = psd_avg[phase_index]/psd_avg[phase_index].max()  # normalization
-				plot_to_file(x=freq_series,y=np.array(psd_avg[phase_index]),
-							xlabel='Frequency (Hz)',ylabel='Power Spectral Density',
-							title=' Average PSD of {}_P_{}'.format( \
-															joints_string[0],phase_index),
-							save_path=psd_save_path+'avgpsd_{}_P_{}.eps'.format( \
-															joints_string[0],phase_index))
-			else:
-				pass
+		# for phase_index in range(len(psd_avg)):
+		# 	if peak_count[phase_index] > 0:
+		# 		psd_avg[phase_index] = psd_avg[phase_index]/psd_avg[phase_index].max()  # normalization
+		# 		plot_to_file(x=freq_series,y=np.array(psd_avg[phase_index]),
+		# 					xlabel='Frequency (Hz)',ylabel='Power Spectral Density',
+		# 					title=' Average PSD of {}_P_{}'.format( \
+		# 													joints_string[0],phase_index),
+		# 					save_path=psd_save_path+'avgpsd_{}_P_{}.eps'.format( \
+		# 													joints_string[0],phase_index))
+		# 	else:
+		# 		pass
 
 		# plot psd_avg in diff scale levels
 
 		# if not peak in all strides, use 0 array as complement.
-		complement_arr = np.zeros(freq_series.shape,dtype= float)
+		# complement_arr = np.zeros(freq_series.shape,dtype= float)
 
-		for scale in range(3):
-			phase_index = list(np.array((1,2,3,4))+scale*4)
-			phase_index.insert(0,0) # use no_phase line as comparison
-			psd_avg_scale_level = []
-			for index in phase_index:
-				if peak_count[index]>0:
-					psd_avg_scale_level.append(psd_avg[index]) # this sum now, take average in plot by div total fft_count
-				else:
-					psd_avg_scale_level.append(complement_arr)
-				# psd_avg_scale_level.append(psd_avg[index]) # this sum now, take average in plot by div total fft_count
-			legend = ['no_phase','scl{}_ori_0'.format(scale),'scl{}_ori_pi/4'.format(scale),\
-						'scl{}_ori_pi/2'.format(scale),'scl{}_ori_3pi/4'.format(scale)]
-			n_plot_to_file(run_time = peak_count[phase_index],x=freq_series,y_list=psd_avg_scale_level,\
-							xlabel='Frequency (Hz)', ylabel='Power Spectral Density',\
-							legends = legend,title=' Average PSD of {}_scl{}'.format( \
-														joints_string[0],scale),\
-							plot_path=psd_save_path+'avgpsd_{}_scl{}.eps'.format( \
-														joints_string[0],scale))
+		# for scale in range(3):
+		# 	phase_index = list(np.array((1,2,3,4))+scale*4)
+		# 	phase_index.insert(0,0) # use no_phase line as comparison
+		# 	psd_avg_scale_level = []
+		# 	for index in phase_index:
+		# 		if peak_count[index]>0:
+		# 			psd_avg_scale_level.append(psd_avg[index]) # this sum now, take average in plot by div total fft_count
+		# 		else:
+		# 			psd_avg_scale_level.append(complement_arr)
+		# 		# psd_avg_scale_level.append(psd_avg[index]) # this sum now, take average in plot by div total fft_count
+		# 	legend = ['no_phase','scl{}_ori_0'.format(scale),'scl{}_ori_pi/4'.format(scale),\
+		# 				'scl{}_ori_pi/2'.format(scale),'scl{}_ori_3pi/4'.format(scale)]
+		# 	n_plot_to_file(run_time = peak_count[phase_index],x=freq_series,y_list=psd_avg_scale_level,\
+		# 					xlabel='Frequency (Hz)', ylabel='Power Spectral Density',\
+		# 					legends = legend,title=' Average PSD of {}_scl{}'.format( \
+		# 												joints_string[0],scale),\
+		# 					plot_path=psd_save_path+'avgpsd_{}_scl{}.eps'.format( \
+		# 												joints_string[0],scale))
 		# write file is_peak_overall.csv
 		print 'writting results into file : is_peak_overall_{}.csv'.format(joints_string[0])
 		csvwriter_ispeak_head =['Phase', 'is_peak', 'freq', 'fall']

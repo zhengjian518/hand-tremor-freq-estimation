@@ -34,8 +34,12 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 	peak_mark = []
 	for code_idx in range(0,code_num):
 		patient_code = acc_full_path[code_idx].split('/')[5]
+		tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task,window_size) +patient_code + '_tfd/'+ 'freq_psd_txt/'
+		phasefreq_txt_path = tfd_folder + 'freq_result.txt'
+		rgbfreq_txt_path = tfd_folder + 'freq_rgb.txt'
 		if not os.path.isdir(acc_full_path[code_idx] + '{}/'.format(task)) \
-			or not os.path.isdir(tfd_result_path + '{}_joint_tfd_{}/'.format(task,window_size) +patient_code + '_tfd/'):
+			or not os.path.isfile(phasefreq_txt_path)\
+			or not os.path.isfile(rgbfreq_txt_path):
 			continue # no such task in this patient folder
 		
 		accfreq_txt_path = acc_full_path[code_idx] + '{}/freq.txt'.format(task)
@@ -46,12 +50,12 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 		code_list.append(code)
 		acc_result.append(list(all_acclines[-1,:])) # 2 columns
 		peak_mark.append(code_idx)
-		tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task,window_size) +patient_code + '_tfd/'+ 'freq_psd_txt/'
-		phasefreq_txt_path = tfd_folder + 'freq_result.txt'
+		# tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task,window_size) +patient_code + '_tfd/'+ 'freq_psd_txt/'
+		# phasefreq_txt_path = tfd_folder + 'freq_result.txt'
 		all_phaselines = np.loadtxt(phasefreq_txt_path)
 		phase_result.append(list(all_phaselines[-1,:])) # 3 columns
 
-		rgbfreq_txt_path = tfd_folder + 'freq_rgb.txt'
+		# rgbfreq_txt_path = tfd_folder + 'freq_rgb.txt'
 		all_rgblines = np.loadtxt(rgbfreq_txt_path)
 		rgb_result.append(list(all_rgblines[-1,:])) # 2 columns
 
@@ -206,8 +210,9 @@ if __name__ == "__main__":
 				'Maanden_terug','Pianospelen','Rust','Schrijven_links','Schrijven_rechts',\
 				'Spiraal_links','Spiraal_rechts','Top_neus_links','Top_neus_rechts','Top-top','Volgen']
 
-	mean_err_per_task_csv_path = csv_folder + 'mean_err_per_task(only periodic).csv'
-	
+	mean_err_per_task_csv_path = csv_folder + 'mean_err_per_task(all patients).csv'
+	# mean_err_per_task_csv_path = csv_folder + 'mean_err_per_task(only periodic).csv'
+
 	mean_error_csvfile = open(mean_err_per_task_csv_path, 'wb')
 	me_csvwriter = csv.writer(mean_error_csvfile)
 	header = ['Task','Mean_err_phase','Mean_err_rgb']

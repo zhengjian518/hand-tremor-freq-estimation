@@ -143,7 +143,6 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 		patient_codes.append(code)
 
 	patient_codes = patient_codes[1:] # remove folder CSVs/
-	print patient_codes
 
 	for task_path in tasks_path:
 		task_name = task_path.split('/')[6]
@@ -155,10 +154,10 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 		csvwriter.writerow(csvwriter_head)
 
 		for code in patient_codes:
-			acc_path = acc_result_path + code + '/freq.txt'
+			acc_path = acc_result_path + code + '/' + task_name + '/freq.txt'
 			if not os.path.isfile(acc_path):
 				continue
-			print code
+
 			tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task_name,window_size) +code + '_tfd/'+ 'freq_psd_txt/'
 			phasefreq_txt_path = tfd_folder + 'freq_result.txt'
 			all_phaselines = np.loadtxt(phasefreq_txt_path)

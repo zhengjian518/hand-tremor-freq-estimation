@@ -142,6 +142,8 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 		code = patient_code_path.split('/')[5]
 		patient_codes.append(code)
 
+	print patient_codes
+	
 	for task_path in tasks_path:
 		task_name = task_path.split('/')[6]
 		task_name = re.sub('_joint_tfd_61','',task_name)

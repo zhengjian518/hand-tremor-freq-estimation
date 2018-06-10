@@ -187,7 +187,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			joint_conf_maps = []
 			
 			# start number : (0,61,121,182,242,303, ...)
-			for i in range(0,int(video_fft.FRAME_COUNT/stride)-2):
+			for i in range(0,int(video_fft.FRAME_COUNT/stride)-1):
 			# for i in range(0,int(2)):
 				if not ((i+2)%2 == 0): # odd count 
 					f_start_number = stride + window_size*(i/2)
@@ -675,7 +675,7 @@ if __name__ == "__main__":
 	folders = sorted(folders,key=lambda x: (int(re.sub('\D','',x)),x))
 	# folders = util.get_full_path_under_folder('../results/joint_data/T008_Rechts_crop/')
 	video_path_list ,window_size_list, joint_list = [],[],[]
-	for i in range(18,20):
+	for i in range(18,35):
 		video_path = folders[i]+ 'Spiraal_links/' + 'kinect.avi'
 		# video_path = folders[i]+ 'segment_img/Rwri/joint_video.avi'
 		if "Rechts" in folders[i]:
@@ -689,7 +689,6 @@ if __name__ == "__main__":
 		else:
 			# video_path = folders[i]+ 'Top_neus_rechts/' + 'kinect.avi'
 			if os.path.isfile(video_path):
-				print video_path
 				video_path_list.append(video_path)
 				joint_list.append([7])
 				window_size_list.append(61)

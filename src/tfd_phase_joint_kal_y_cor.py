@@ -74,7 +74,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			video_code = video_path.split('/')[5]# 3(T008), 4(All)
 			video_name = video_path.split('/')[6]# 4      , 5
 			print 'Video {}_{} in process'.format(video_code,video_name)
-			result_save_path = '../{}_joint_tfd_{}/'.format(video_name,window_size) + video_code +'_tfd/'
+			result_save_path = '../result/{}_joint_tfd_{}/'.format(video_name,window_size) + video_code +'_tfd/'
 			if not os.path.isdir(result_save_path):
 				os.makedirs(result_save_path)
 
@@ -675,8 +675,8 @@ if __name__ == "__main__":
 	folders = sorted(folders,key=lambda x: (int(re.sub('\D','',x)),x))
 	# folders = util.get_full_path_under_folder('../results/joint_data/T008_Rechts_crop/')
 	video_path_list ,window_size_list, joint_list = [],[],[]
-	for i in range(0,len(folders)):
-		video_path = folders[i]+ 'Rust/' + 'kinect.avi'
+	for i in range(21,21):
+		video_path = folders[i]+ 'Top-top/' + 'kinect.avi'
 		# video_path = folders[i]+ 'segment_img/Rwri/joint_video.avi'
 		if "Rechts" in folders[i]:
 			# video_path = folders[i]+ 'Top_neus_links/' + 'kinect.avi'

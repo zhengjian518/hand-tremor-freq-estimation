@@ -16,6 +16,7 @@ from scipy import io
 import util
 import re
 import operator
+import csv
 
 def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_size):
 
@@ -95,17 +96,47 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 	fig.tight_layout()
 	fig.savefig('/local/guest/joint_postion/tremor-freq-detection/error_analysis/plots/'+ '{}.pdf'.format(task))
 
+def write_baseline_to_csv(acc_result_path):
+	
+	acc_full_path = util.get_full_path_under_folder(acc_result_path)
+	acc_full_path = sorted(acc_full_path,key=lambda x: (int(re.sub('\D','',x)),x))
+	csv_folder = acc_result_path + 'CSVs/'
+	if not os.path.isdir(csv_folder):
+		os.makedirs(csv_folder)
+
+	for patient_code_path in acc_full_path:
+		code = patient_code_path.split('/')[5]
+		csv_save_path = csv_folder + '{}.csv'.format(code)
+		csvfile = open(csv_save_path, 'wb')
+		csvwriter = csv.writer(csvfile)
+		csvwriter_head = ['Task','Freq','IsPeak']
+		csvwriter.writerow(csvwriter_head)
+		row = []
+		task_paths = util.get_full_path_under_folder(patient_code_path)
+		task_paths = sorted(task_paths,key=lambda x: (int(re.sub('\D','',x)),x))
+		for task in task_paths:
+			task_name = task.split('/')[6]
+			freq_txt_path = task + 'freq.txt'
+			all_lines = np.loadtxt(freq_txt_path)
+			row = [task_name,all_lines[-1,:][1],all_lines[-1,:][0]]
+			csvwriter.writerow(row)
+		del csvwriter
+
+
 
 if __name__ == "__main__":
 
 	acc_result_path = '/local/guest/benchmark_acc/baseline_win61/'
-	tfd_result_path = '/local/guest/joint_postion/tremor-freq-detection/result/'
-	# task = '100-7'
-	# task = 'Rust'
-	task_list = ['100-7','2_hz_lager','2_hz_hoger','Duimen_omhoog','Fingertap','Handen_in_pronatie',\
-				'Maanden_terug','Pianospelen','Rust','Schrijven_links','Schrijven_rechts',\
-				'Spiraal_links','Spiraal_rechts','Top_neus_links','Top_neus_rechts','Top-top','Volgen']
-	window_size = '61'
-	for task in task_list:
-		print 'error analysis on task {}'.format(task)
-		task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_size)
+	# tfd_result_path = '/local/guest/joint_postion/tremor-freq-detection/result/'
+	# # task = '100-7'
+	# # task = 'Rust'
+	# task_list = ['100-7','2_hz_lager','2_hz_hoger','Duimen_omhoog','Fingertap','Handen_in_pronatie',\
+	# 			'Maanden_terug','Pianospelen','Rust','Schrijven_links','Schrijven_rechts',\
+	# 			'Spiraal_links','Spiraal_rechts','Top_neus_links','Top_neus_rechts','Top-top','Volgen']
+	# window_size = '61'
+	# for task in task_list:
+	# 	print 'error analysis on task {}'.format(task)
+	# 	task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_size)
+
+	# acc_result_path = '/home/jianz/OnCluster/baseline_win61/'
+	write_baseline_to_csv(acc_result_path)

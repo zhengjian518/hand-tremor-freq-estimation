@@ -143,8 +143,16 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 		patient_codes.append(code)
 
 	patient_codes = patient_codes[1:] # remove folder CSVs/
-	print patient_codes
+	# codes_num = len(patient_codes)
+
+	peak_count_csv = csv_folder + 'all_tasks_peak_count.csv'
+	peak_count_csvfile = open(csv_save_path, 'wb')
+	pc_csvwriter = csv.writer(peak_count_csvfile)
+	pc_csvwriter_head = ['Task','Total_num','Acc_peak_count','Phase_peak_count','Rgb_peak_count']
+	pc_csvwriter.writerow(pc_csvwriter_head)
+
 	for task_path in tasks_path:
+		pc_csvwriter_row = []
 		task_name = task_path.split('/')[6]
 		task_name = re.sub('_joint_tfd_61','',task_name)
 		csv_save_path = csv_folder + '{}.csv'.format(task_name)
@@ -152,15 +160,20 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 		csvwriter = csv.writer(csvfile)
 		csvwriter_head = ['Patient_code','Freq_acc','Freq_phase','Freq_rgb','IsPeak_acc','IsPeak_phase','IsPeak_rgb']
 		csvwriter.writerow(csvwriter_head)
-
+		Total_num = 0
+		Acc_peak_count = 0
+		Phase_peak_count = 0
+		Rgb_peak_count = 0
 		for code in patient_codes:
+
 			acc_path = acc_result_path + code + '/' + task_name + '/freq.txt'
 			tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task_name,window_size) +code + '_tfd/'+ 'freq_psd_txt/'
 			phasefreq_txt_path = tfd_folder + 'freq_result.txt'
 			rgbfreq_txt_path = tfd_folder + 'freq_rgb.txt'
-			print acc_path
+			# skip the code which doesn't have this task
 			if not os.path.isfile(acc_path) or not os.path.isfile(phasefreq_txt_path) or not os.path.isfile(rgbfreq_txt_path):
 				continue
+			Total_num += 1
 			all_phaselines = np.loadtxt(phasefreq_txt_path)
 			all_rgblines = np.loadtxt(rgbfreq_txt_path)
 			all_acclines = np.loadtxt(acc_path)
@@ -168,7 +181,17 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 			row = [code,all_acclines[-1,:][1],all_phaselines[-1,:][1],all_rgblines[-1,:][1],\
 					all_acclines[-1,:][0],all_phaselines[-1,:][0],all_rgblines[-1,:][0]]
 			csvwriter.writerow(row)
+			if not all_acclines[-1,:][0] == 0:
+				Acc_peak_count += 1
+			if not all_phaselines[-1,:][0] == 0:
+				Phase_peak_count += 1
+			if not all_rgblines[-1,:][0] == 0:
+				Rgb_peak_count += 1
+
+		pc_csvwriter_row = [task_name,Total_num,Acc_peak_count,Phase_peak_count,Rgb_peak_count]
+		pc_csvwriter.writerow(pc_csvwriter_row)
 		del csvwriter
+	del pc_csvwriter
 
 if __name__ == "__main__":
 

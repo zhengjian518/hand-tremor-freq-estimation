@@ -155,10 +155,10 @@ def write_task_result_to_csv(tfd_result_path,acc_result_path,window_size):
 
 		for code in patient_codes:
 			acc_path = acc_result_path + code + '/' + task_name + '/freq.txt'
-			print acc_path
-			if not os.path.isfile(acc_path):
-				continue
 			tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task_name,window_size) +code + '_tfd/'+ 'freq_psd_txt/'
+			print acc_path
+			if not os.path.isfile(acc_path) or not os.path.isdir(tfd_folder):
+				continue
 			phasefreq_txt_path = tfd_folder + 'freq_result.txt'
 			rgbfreq_txt_path = tfd_folder + 'freq_rgb.txt'
 			all_phaselines = np.loadtxt(phasefreq_txt_path)

@@ -280,6 +280,4 @@ if __name__ == "__main__":
 	ax.legend()
 
 	fig.tight_layout()
-	fig.savefig('/local/guest/joint_postion/tremor-freq-detection/error_analysis/plots/'+ 'acc_num_per_task.pdf'
-
-
+	fig.savefig('/local/guest/joint_postion/tremor-freq-detection/error_analysis/plots/acc_num_per_task.pdf'

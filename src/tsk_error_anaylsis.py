@@ -41,19 +41,19 @@ def task_err_analusis_all_patients(acc_result_path,tfd_result_path,task,window_s
 		accfreq_txt_path = acc_full_path[code_idx] + '{}/freq.txt'.format(task)
 		all_acclines = np.loadtxt(accfreq_txt_path)
 		
-		if not int(all_acclines[-1,:][0]) == 0: # periodic detected
-			code = patient_code.split('_')[0]
-			code_list.append(code)
-			acc_result.append(list(all_acclines[-1,:])) # 2 columns
-			peak_mark.append(code_idx)
-			tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task,window_size) +patient_code + '_tfd/'+ 'freq_psd_txt/'
-			phasefreq_txt_path = tfd_folder + 'freq_result.txt'
-			all_phaselines = np.loadtxt(phasefreq_txt_path)
-			phase_result.append(list(all_phaselines[-1,:])) # 3 columns
+		# if not int(all_acclines[-1,:][0]) == 0: # periodic detected
+		code = patient_code.split('_')[0]
+		code_list.append(code)
+		acc_result.append(list(all_acclines[-1,:])) # 2 columns
+		peak_mark.append(code_idx)
+		tfd_folder = tfd_result_path + '{}_joint_tfd_{}/'.format(task,window_size) +patient_code + '_tfd/'+ 'freq_psd_txt/'
+		phasefreq_txt_path = tfd_folder + 'freq_result.txt'
+		all_phaselines = np.loadtxt(phasefreq_txt_path)
+		phase_result.append(list(all_phaselines[-1,:])) # 3 columns
 
-			rgbfreq_txt_path = tfd_folder + 'freq_rgb.txt'
-			all_rgblines = np.loadtxt(rgbfreq_txt_path)
-			rgb_result.append(list(all_rgblines[-1,:])) # 2 columns
+		rgbfreq_txt_path = tfd_folder + 'freq_rgb.txt'
+		all_rgblines = np.loadtxt(rgbfreq_txt_path)
+		rgb_result.append(list(all_rgblines[-1,:])) # 2 columns
 
 	# step 2
 	# calculate abs error

@@ -675,7 +675,7 @@ if __name__ == "__main__":
 	folders = sorted(folders,key=lambda x: (int(re.sub('\D','',x)),x))
 	# folders = util.get_full_path_under_folder('../results/joint_data/T008_Rechts_crop/')
 	video_path_list ,window_size_list, joint_list = [],[],[]
-	for i in range(19,20):
+	for i in range(18,20):
 		video_path = folders[i]+ 'Spiraal_links/' + 'kinect.avi'
 		# video_path = folders[i]+ 'segment_img/Rwri/joint_video.avi'
 		if "Rechts" in folders[i]:
@@ -689,6 +689,7 @@ if __name__ == "__main__":
 		else:
 			# video_path = folders[i]+ 'Top_neus_rechts/' + 'kinect.avi'
 			if os.path.isfile(video_path):
+				print video_path
 				video_path_list.append(video_path)
 				joint_list.append([7])
 				window_size_list.append(61)

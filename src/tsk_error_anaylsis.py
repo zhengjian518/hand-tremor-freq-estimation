@@ -251,22 +251,22 @@ if __name__ == "__main__":
 	fig, ax = plt.subplots()
 
 	index = np.arange(len(task_list))
-	bar_width = 0.25
+	bar_width = 0.3
 
-	opacity = 0.5
+	opacity = 0.45
 	error_config = {'ecolor': '0.3'}
 
-	rects1 = ax.bar(index, total_length, bar_width,
+	rects1 = ax.bar(index +0.5*bar_width, total_length, bar_width,
 	                alpha=opacity, color='b',
 	                error_kw=error_config,
 	                label='task_count')
 
-	rects2 = ax.bar(index + bar_width, phase_accurate_length, bar_width,
+	rects2 = ax.bar(index + 1.5*bar_width, phase_accurate_length, bar_width,
 	                alpha=opacity, color='g',
 	                error_kw=error_config,
 	                label='phase_count')
 
-	rects3 = ax.bar(index + 2*bar_width, rgb_accurate_length, bar_width,
+	rects3 = ax.bar(index + 2.5*bar_width, rgb_accurate_length, bar_width,
 	                alpha=opacity, color='r',
 	                error_kw=error_config,
 	                label='rgb_count')

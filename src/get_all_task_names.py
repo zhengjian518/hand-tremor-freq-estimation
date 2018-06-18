@@ -12,9 +12,15 @@ for i in range(0,len(all_patient_code_path)):
         task_names = util.get_dir_list(all_patient_code_path[i])
         all_tasks_name = all_tasks_name + task_names
         print all_patient_code_path[i]
-all_name = set(all_tasks_name)
-for all_task in all_name:
+all_name = list(set(all_tasks_name))
+names = []
+for task in all_name:
+	a = re.sub('Extra_taak_\xe2\x80\x93_','',task)
+	names.append(a)
+	b = re.sub('Extra_taak_-_','',task)
+	names.append(b)
 
-sorted(all_name)
-print all_name
-print len(all_name)
+alll_names = list(set(names))
+
+print alll_names
+print len(alll_names)

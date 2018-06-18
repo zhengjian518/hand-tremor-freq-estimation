@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from video import Video
 from video_in_frame import VideoInFrame
 from io_video import IOVideo

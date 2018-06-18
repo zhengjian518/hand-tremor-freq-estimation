@@ -124,7 +124,7 @@ class PE_AND_CROP():
                 break
 
             print 'Video {}_{} in process'.format(video_code,video_name)
-            video_code_save_path = '../results/' +video_code +'_crop/'
+            video_code_save_path = '/local/guest/pose_data/results/' +video_code +'_crop/'
             if not os.path.isdir(video_code_save_path):
                 os.mkdir(video_code_save_path)
             video_name_save_path = video_code_save_path+ video_name +'/'

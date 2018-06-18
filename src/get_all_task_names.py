@@ -14,13 +14,20 @@ for i in range(0,len(all_patient_code_path)):
         print all_patient_code_path[i]
 all_name = list(set(all_tasks_name))
 names = []
+
 for task in all_name:
-	a = re.sub('Extra_taak_\xe2\x80\x93_','',task)
-	names.append(a)
-	b = re.sub('Extra_taak_-_','',task)
-	names.append(b)
+	if ('Extra_taak_–_') in task:
+		a = re.sub('Extra_taak_–_','',task)
+		names.append(a)
+	elif 'Extra_taak_-_' in task:
+		b = re.sub('Extra_taak_-_','',task)
+		names.append(b)
+	else:
+		names.append(task)
+
 
 alll_names = list(set(names))
+sorted(alll_names)
 
 print alll_names
 print len(alll_names)

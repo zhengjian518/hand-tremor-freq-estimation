@@ -19,7 +19,6 @@ class Evaluate:
     """Static Class for the evaluation of pose estimation and frequency detector,
     All results path will be defines here.
     TremorFrequencyDetector/results/evaluate/: {video_name}/{video_name}_samples/im{frame_number}.png + images_list.txt
-
     """
     
     @staticmethod

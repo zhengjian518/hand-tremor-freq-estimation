@@ -884,12 +884,6 @@ def make_color_ball_video(freq_tremor,freq_noise,save_path,fps=30.0,
 
             cv2.circle(frame,(center_x,center_y),ball_radius,ball_clr,-1)
             if noise_on:
-                # noise = 255*np.random.normal(0, noise_sigma, size=[video_height,video_width])
-                # noise_3channel = np.ones((video_height,video_width,3),dtype = np.float32)
-                # noise_3channel[:,:,0] = noise
-                # noise_3channel[:,:,1] = noise
-                # noise_3channel[:,:,2] = noise
-                # frame = frame + 255*noise_3channel
                 frame = frame + 255*np.random.normal(0, noise_sigma, size=frame.shape)
                 
             # color_frame = cv2.cvtColor(frame,cv2.COLOR_GRAY2BGR)

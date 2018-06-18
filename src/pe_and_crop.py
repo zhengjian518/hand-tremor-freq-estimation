@@ -15,7 +15,7 @@ from cycler import cycler
 from logger import Logger
 import util
 
-class PARRAL3_PE_CROP(): 
+class PE_AND_CROP(): 
     """
     This class is for pose estimation and joint frame crop on Silvia'PC
     """
@@ -34,33 +34,25 @@ class PARRAL3_PE_CROP():
         def pe_save_joint_box(video_path,prediction_arr_path,
                                 segment_img_path,conf_arr_path,JOINTS_NUM):
             """Save PE confidence matrix, prediction and prediction box to file, 
-                to save eperiment time."""
+                to save eperiment time.
+            """
 
             # JOINTS_NUM = 14
             part_str = ["head", "neck", "Rsho", "Relb", "Rwri", "Lsho", "Lelb", "Lwri",\
                          "Rhip", "Rkne", "Rank", "Lhip", "Lkne", "Lank"]
-            # level_name = sys.argv[1] if len(sys.argv) > 1 else 'info'
 
             # init video writter
             fourcc = cv2.VideoWriter_fourcc(*'XVID')
             box_size = 28
             name = part_str[JOINTS_NUM]
             
-            # pe_logger = Logger('pe_logger',level_name)
-
             def pe():
-
-                # pe_logger = Logger('pe_logger',level_name)
-
                 video_pe = Video(video_path)
-                # video_pe.set_next_frame_index(716)  # for making joint video
                 io_video = IOVideo(resizing_on=True,scale=368/video_pe.HEIGHT,
                                     fps=30,height=368,
                                     width=368*video_pe.WIDTH/video_pe.HEIGHT) #368
                 cpm = CPM()
-
                 box_size = 28
-
                 out_video = cv2.VideoWriter(segment_img_path + '{}.avi'.format(name),\
                                                             fourcc, 30.0, (box_size*2,box_size*2),isColor = True)
                 print '{}_{} start'.format(video_code,video_name)
@@ -87,7 +79,6 @@ class PARRAL3_PE_CROP():
                     #                             prediction[0,1]-prediction[1,1],2) )
                     #     box_size = int( box_size/2)
 
-                    # for joint_i in range(JOINTS_NUM):
                     for joint_i in [JOINTS_NUM]:
                         # TODO: may have bug - box is out of image
                         pred_y = int(prediction[joint_i,0])
@@ -115,15 +106,13 @@ class PARRAL3_PE_CROP():
                         binay_file = file(joint_conf_arr_path+'conf_{}_{}.bin'.format(joint_i,
                                                 video_pe.next_frame_index),"wb")
                         np.save(binay_file,joint_conf_map)
-                        # np.savetxt(joint_conf_arr_path+'conf_{}_{}.txt'.format(joint_i,
-                        #                 video_pe.next_frame_index),joint_conf_map)
+
                 out_video.release()
                 del io_video, video_pe, cpm
             pe()
 
         for i in range(len(video_path_list)):
             video_path = video_path_list[i]
-            # video_name = os.path.splitext(os.path.basename(video_path))[0]
             video_code = video_path.split('/')[5]
             video_name = video_path.split('/')[6]
             
@@ -158,12 +147,15 @@ class PARRAL3_PE_CROP():
                                     conf_arr_path,JOINTS_NUM)
 
 if __name__ == '__main__':
-    pe_instance = PARRAL3_PE_CROP()
-    full_video_list = ['/media/tremor-data/TremorData_split/Tremor_data/T042_Rechts/Top_neus_links/kinect.avi']
-    #video_task_list = util.get_full_path_under_folder('/media/tremor-data/TremorData_split/Tremor_data/T067_Links/')
-    #full_video_list=[]
-    #for task_path in video_task_list:
-    #    task_path = task_path + 'kinect.avi'
-    #    full_video_list.append(task_path)
+    pe_instance = PE_AND_CROP()
+
+#    full_video_list = ['/media/tremor-data/TremorData_split/Tremor_data/T040_Links/Top-top/kinect.avi',
+#	                  '/media/tremor-data/TremorData_split/Tremor_data/T040_Links/Volgen/kinect.avi',]
+    patient_code_folder = '/media/tremor-data/TremorData_split/Tremor_data/T001_Links/'
+    video_task_list = util.get_full_path_under_folder(patient_code_folder)
+    full_video_list=[]
+    for task_path in video_task_list:
+        task_path = task_path + 'kinect.avi'
+        full_video_list.append(task_path)
     pe_instance.pe_save_batch(full_video_list)
     del pe_instance

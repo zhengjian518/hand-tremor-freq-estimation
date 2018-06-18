@@ -64,24 +64,6 @@ def fequency_evaluate_real():
 												path,window_size,
 												window_size/2,30,
 												is_ball_video= True )
-			# print freq_results
-	# 		benchmark = np.array([4.4628099174,4.7107438017,4.7107438017,4.958677686,4.7107438017,\
-	# 					4.7107438017,4.7107438017,4.4628099174,4.4628099174,4.7107438017,\
-	# 					4.4628099174,4.4628099174,4.4628099174,4.7107438017])
-	# 		print 'the len of freq_results is {}'.format(len(freq_results))
-	# 		print 'the difference is '
-	# 		print np.array(freq_results) - benchmark
-	# 		mse = np.sum((np.array(freq_results) - benchmark)**2,0)/len(freq_results)
-
-
-	# 			# mse = 0.0
-	# 			# for freq in freq_results:
-	# 			#     mse += math.pow(float(freq)-float(6),2)
-	# 			# MSE.append(mse/len(freq_results))
-	# 		# print MSE
-	# 		MSE_list.append(mse)
-			
-	# print MSE_list
 
 	print 'FA: ori_images'
 	path = segment_path + 'ori_images/'

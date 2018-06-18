@@ -85,15 +85,6 @@ class TFD_PHASE_JOINT():
 			conf_arr = [list(i) for i in conf_arr]
 			conf_arr_list.append(np.array(conf_arr))
 
-		# prediction_arr_path = '../results/joint_data/'+video_code+'/'+video_name+'/'+'prediction_arr/'
-		# prediction_arr_fullpath_list = util.get_file_fullpath_list(prediction_arr_path,file_format='txt')
-
-		# for prediction_arr_index in range(0,len(prediction_arr_fullpath_list)):
-		# 	prediction_arr = np.genfromtxt(prediction_arr_fullpath_list[prediction_arr_index],dtype=None)
-		# 	prediction_arr = [list(i) for i in prediction_arr]
-		# 	prediction_arr_list.append(np.array(prediction_arr))
-
-
 		def pe(conf_map_queue,joint_pred_queue,lock):
 			"""Pose estimation.
 			
@@ -158,10 +149,6 @@ class TFD_PHASE_JOINT():
 
 			frames = io_video_instance.get_video_frames(video_fft,\
 			video_fft.FRAME_COUNT,grayscale_on=True)
-
-			# io_video = IOVideo(resizing_on=False,scale=368/video_fft.HEIGHT,
-			# 		write_to_video_on=True,video_path=fft_video_path,fps=25,
-			# 		height=368,width=368*video_fft.WIDTH/video_fft.HEIGHT)
 			
 			# Init FFTM for each joint
 			fftm = []
@@ -178,33 +165,11 @@ class TFD_PHASE_JOINT():
 
 				joint_fft_squences = []
 				joint_conf_maps = []
-				# joint_freq_max = []
-				# freq_map = np.zeros( (368,
-				# 					int(368*video_fft.WIDTH/video_fft.HEIGHT)) )
-
-				# Step 1: Get pe prediction and init box size with first 
-				#           estimation.
-				# joint_preds =  joint_pred_queue.get()
-				# conf_maps = conf_map_queue.get()
 
 				conf_maps = []
 				for conf_num in range(0,stride):
 					conf_maps.append(conf_arr_list[conf_num+ fft_count * stride]) # 61 elements
 
-
-				# if box_size is None:
-				#     box_size = math.sqrt( 
-				#                 math.pow(joint_preds[0,0]-joint_preds[1,0],2)+ \
-				#                 math.pow(joint_preds[0,1]-joint_preds[1,1],2) )
-				#     box_size = int(box_size/2)
-
-				# TODO: how to find a proper box size can be devided by 4
-				# if box_size is None:
-				# 	box_size = 44
-				# 	box_size = int(box_size/2)
-
-				# Step 2: Crop joint segments from image and send to fftm 
-				#           and get PSD,
 				for joint_i in JOINT_LIST:# range(JOINTS_NUM):
 					# TODO: may have bug - box is out of image
 					# pred_y = int(joint_preds[joint_i,0])
@@ -256,57 +221,11 @@ class TFD_PHASE_JOINT():
 					joint_fft_squences.append(joint_fft_squences_inner)
 					joint_conf_maps.append(joint_conf_maps_inner)
 
-					# Visualization
-					# freq_map[pred_y-box_size:pred_y+box_size,\
-					# 			pred_x-box_size:pred_x+box_size] = freq_max_list[0]
-
-				# # Step 3: Save conf map and fft results to queue
-				# lock.acquire()
-				# joint_conf_map_queue.put(joint_conf_maps)
-				# fft_sequence_queue.put(joint_fft_squences)
-				# lock.release()
-
-				# # Step 4: Save to Video for Visualization
-				# if i==0:
-				# 	start_No = i*stride
-				# 	frame_to_take_num = window_size*3/4 + 1
-				# elif i==int(video_fft.FRAME_COUNT/stride)-2:
-				# 	start_No = i*stride+window_size/4
-				# 	frame_to_take_num = window_size*3/4 + 1
-				# else:
-				# 	start_No = i*stride+window_size/4
-				# 	frame_to_take_num = window_size/2 + 1
-				# video_background.set_next_frame_index(start_No)
-				# print("start from:{}, frame_num:{}".format(start_No,
-				#                                            frame_to_take_num))
-				# freq_map = 0.5*util.colorize(np.divide(freq_map,FREQ_SHOW_MAX))
-				# for frame_No in range(frame_to_take_num):
-				# 	frame_background = io_video.get_video_frames(
-				# 						video_background,1,grayscale_on=False)
-				# 	frame_to_save = freq_map + 0.5*frame_background
-				# 	io_video.write_frame_to_video( np.uint8(frame_to_save) )
-
 			del io_video
 
 
 
 		tfd_logger = Logger('tfd_logger',level_name)
-
-		# Init PE,FFT process
-		# lock1  = multiprocessing.Lock()
-		# lock2  = multiprocessing.Lock()
-		# conf_map_queue = multiprocessing.Queue(1)
-		# joint_pred_queue = multiprocessing.Queue(1)
-		# fft_sequence_queue = multiprocessing.Queue(1)
-		# joint_conf_map_queue = multiprocessing.Queue(window_size/2+1)
-		# pe_process = multiprocessing.Process(target=pe, args=(conf_map_queue,
-		# 										joint_pred_queue,lock1,))
-		# fft_process = multiprocessing.Process(target=fft,args=(joint_pred_queue, 
-		# 										conf_map_queue, 
-		# 										fft_sequence_queue, 
-		# 										joint_conf_map_queue,lock2,))
-		# pe_process.start()
-		# fft_process.start()
 
 		# Init frequency series
 		len_half = window_size/2 if window_size%2==0 else (window_size+1)/2

@@ -30,11 +30,11 @@ from filterpy.common import Q_discrete_white_noise
 class KFilter():
 	def __init__(self,start_pos):
 		self.f = KalmanFilter(dim_x=2, dim_z=1)
-		self.f.x = start_pos
-		self.f.F = np.array([[1, 0], [0, 1]], np.float32) # A 
-		self.f.H = np.array([[1, 0]], np.float32) 
+		self.f.x = start_pos # initial state
+		self.f.F = np.array([[1, 0], [0, 1]], np.float32) # state transition matrix A 
+		self.f.H = np.array([[1, 0]], np.float32) # Measurement function
 		self.f.P *= 0.001 # covariance matrix
-		self.f.R = np.array([[1]],np.float32) * 3 # measurement noise
+		self.f.R = np.array([[1]],np.float32) * 3 # measurement noise, state uncertainty
 		# f.Q = Q_discrete_white_noise(dim=2, dt=0.033, var=0.003) # process noise
 		self.f.Q = np.array([[1,0],[0,1]],np.float32) * 0.003
 
@@ -91,9 +91,6 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 
 		stride = window_size - noverlap # 121- 60(121/2) = 61
 
-		# level_name = sys.argv[1] if len(sys.argv) > 1 else 'info'
-		# fft_logger = Logger('fft_logger',level_name)
-
 		# load conf_maps and predcition_arr from joint_data folder
 		video_code = video_path.split('/')[5]
 		video_name = video_path.split('/')[6]
@@ -110,24 +107,14 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 		# conf_arr_fullpath_list = util.get_file_fullpath_list(conf_arr_path,file_format='txt')
 		conf_arr_fullpath_list = sorted(conf_arr_fullpath_list,key=lambda x: (int(re.sub('\D','',x)),x))
 
-		# pos_arr_list = []
-		# pos_arr_path = '../results/joint_data/'+video_code+'/'+video_name+'/'+'prediction_arr/'
-		# pos_arr_fullpath_list = util.get_file_fullpath_list(pos_arr_path,file_format='txt')
-		# pos_arr_fullpath_list = sorted(conf_arr_fullpath_list,key=lambda x: (int(re.sub('\D','',x)),x))
-
-		# TODO: for new produced conf_map in Silvia's PC, not normalized
 		for conf_arr_index in range(0,len(conf_arr_fullpath_list)):
 			conf_arr = np.load(conf_arr_fullpath_list[conf_arr_index])
 			conf_arr = np.array(conf_arr)
 			if use_conf_map:
-				# conf_arr = np.genfromtxt(conf_arr_fullpath_list[conf_arr_index],dtype=None)
-				# conf_arr = [list(i) for i in conf_arr]
 				conf_arr_list.append(conf_arr) # frames of elements in the list , each elem is a array
 			else:
 				conf_arr = np.ones(conf_arr.shape,dtype=float)/sum(sum(conf_arr))
 				conf_arr_list.append(conf_arr)
-			# pos_arr = np.genfromtxt(pos_arr_fullpath_list[conf_arr_index],dtype=float)
-			# pos_arr_list.append(pos_arr[4])
 		cpm_joint_path = '/local/guest/pose_data/results/' + video_code + '_crop' +'/'+video_name+'/'+'prediction_arr/'
 
 		pos_arr_list = util.get_jonit_pos_sequence(cpm_joint_path,JOINT_LIST[0],type="cpm")
@@ -135,10 +122,6 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 		# Init a kalman filter object
 		start_pos = np.array([[pos_arr_list[0][0]],[0.]])
 		kfObj = KFilter(start_pos)
-
-		# if kfObj.x == None:
-		# 	# set the start postition
-		# 	kfObj.x = np.array([[pos_arr_list[0][0]],[0.]])   # [y position, velocity]
 
 		predictedCoords = np.zeros((1, 1), np.float32) # only Y coordinate
 
@@ -154,8 +137,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 		print 'Trajectory smoothing is done.'
 
 		def fft(video_path,conf_arr_list):
-			
-			# fft_logger = Logger('fft_logger',level_name)
+
 			box_size = 28
 			video_fft = Video(video_path)
 			io_video_instance = IOVideo(resizing_on=True,scale=368/video_fft.HEIGHT,write_to_video_on=False,\
@@ -171,8 +153,6 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 			for frame_i in range(0,len(pos_arr_list)):
 				[top,bottom] = [int(pos_for_crop[frame_i][0])-box_size,int(pos_for_crop[frame_i][0])+box_size]
 				[left,right] = [int(pos_for_crop[frame_i][1])-box_size,int(pos_for_crop[frame_i][1])+box_size]
-				# print [top,bottom],[left,right]
-				# print resized_frames[frame_i]
 				cropped_frame = resized_frames[frame_i][top:bottom, left:right]
 				frames.append(cropped_frame)
 			frames = np.array(frames)
@@ -194,11 +174,6 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 				else:					# even count
 					f_start_number = window_size*(i/2)
 
-				# if not ((i+2)%2 == 0): # odd count 
-				# 	f_start_number = 61 + 121*(i/2)
-				# else:					# even count
-				# 	f_start_number = 121*(i/2)
-
 				f_end_number= f_start_number+window_size-1
 
 				fft_logger.info( 'Frame ({}~{})/{} is processing'.format(
@@ -207,7 +182,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 
 				conf_maps = np.array(conf_arr_list[f_start_number:f_end_number+1]) # len(0:120) = 120 not 121
 
-				# Step 2: Crop joint segments from image and send to fftm and get PSD
+				# Crop joint segments from image and send to fftm and get PSD
 
 				cropped_jonit_frames = frames[f_start_number:f_end_number+1,:,:]
 
@@ -258,15 +233,8 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 				joint_fft_squences.append(joint_fft_squences_inner) # element number = fft_count, each element contains 13 results
 				joint_conf_maps.append(joint_conf_maps_inner)
 
-				# Step 3: Save conf map and fft results to queue
-
-				# Step 4: Save to Video for Visualization
-
 			del io_video_instance
 			return joint_fft_squences, joint_conf_maps
-
-
-		# tfd_logger = Logger('tfd_logger',level_name)
 
 		# Init frequency series
 		len_half = window_size/2 if window_size%2==0 else (window_size+1)/2
@@ -312,11 +280,8 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 		psd_overall = []
 		freq_txt = [] # for writing to freq.txt
 
-		# Step 1: Get fft psd and conf map from queue
 		fft_sequences,joint_conf_maps = fft(video_path,conf_arr_list)
 
-		# Step 2: Compute weighted psd, detect peak frequency and save 
-		#         psd to file
 		freq_rgb, psd_rgb = [], []
 		for fft_count in range(len(fft_sequences)): # count level
 			freq_results_inner,psds_inner = [],[]
@@ -326,12 +291,9 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 				weighted_fft_sequence = fft_sequences[fft_count][phase_index] * \
 											 np.average(joint_conf_maps[fft_count][phase_index],axis = 0)
 				# window_size/2 *width*height * width*height
-				# TODO: maybe need another way to use confidence maps
 				
-				weighted_fft_sequence = np.sum(weighted_fft_sequence,
-																axis=(1,2))
-				weighted_fft_sequence = weighted_fft_sequence / \
-												 weighted_fft_sequence.max()
+				weighted_fft_sequence = np.sum(weighted_fft_sequence,axis=(1,2))
+				weighted_fft_sequence = weighted_fft_sequence / weighted_fft_sequence.max()
 
 				psds_inner.append(tuple(weighted_fft_sequence))  # phase level
 				if psd_avg[phase_index] == []:
@@ -340,15 +302,15 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 				else:
 					psd_avg[phase_index] += weighted_fft_sequence
 
-				# plot_to_file(x=freq_series,y=weighted_fft_sequence,
-				# 		xlabel='Frequency (Hz)',
-				# 		ylabel='Power Spectral Density',
-				# 		title='Accumulated PSD of {}, count: {}, phase_pos: {}, time: {:.1f} (s)'.format(
-				#  									joints_string[0],fft_count,phase_index,
-				#  									float((fft_count+1)*\
-				#  									window_size)/2.0/30.0),
-				#  		save_path=psd_save_path+'apsd_{}_{}_p{}.eps'.format(
-				#  						joints_string[0],fft_count,phase_index))
+				plot_to_file(x=freq_series,y=weighted_fft_sequence,
+						xlabel='Frequency (Hz)',
+						ylabel='Power Spectral Density',
+						title='Accumulated PSD of {}, count: {}, phase_pos: {}, time: {:.1f} (s)'.format(
+				 									joints_string[0],fft_count,phase_index,
+				 									float((fft_count+1)*\
+				 									window_size)/2.0/30.0),
+				 		save_path=psd_save_path+'apsd_{}_{}_p{}.eps'.format(
+				 						joints_string[0],fft_count,phase_index))
 
 				freq_i = freq_series[np.argmax(weighted_fft_sequence)]
 				if phase_index ==0:
@@ -397,7 +359,7 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 
 		print 'the peak_count for each phase is \n{}'.format(peak_count)
 
-		# Step 3: Save results to .csv file
+		# Save results to .csv file
 		print 'writting results into files : XXX_tfd_freq.csv, X.csv, auto-slct.csv'
 
 		for fft_count in range(len(fft_sequences)): # count level
@@ -467,41 +429,42 @@ class TFD_PHASE_JOINT_KAL_Y_COR():
 		np.savetxt(freq_result_txt_path,freq_txt)
 
 		# plot psd_avg in all scale and phase levels
-		# for phase_index in range(len(psd_avg)):
-		# 	if peak_count[phase_index] > 0:
-		# 		psd_avg[phase_index] = psd_avg[phase_index]/psd_avg[phase_index].max()  # normalization
-		# 		plot_to_file(x=freq_series,y=np.array(psd_avg[phase_index]),
-		# 					xlabel='Frequency (Hz)',ylabel='Power Spectral Density',
-		# 					title=' Average PSD of {}_P_{}'.format( \
-		# 													joints_string[0],phase_index),
-		# 					save_path=psd_save_path+'avgpsd_{}_P_{}.eps'.format( \
-		# 													joints_string[0],phase_index))
-		# 	else:
-		# 		pass
+		for phase_index in range(len(psd_avg)):
+			if peak_count[phase_index] > 0:
+				psd_avg[phase_index] = psd_avg[phase_index]/psd_avg[phase_index].max()  # normalization
+				plot_to_file(x=freq_series,y=np.array(psd_avg[phase_index]),
+							xlabel='Frequency (Hz)',ylabel='Power Spectral Density',
+							title=' Average PSD of {}_P_{}'.format( \
+															joints_string[0],phase_index),
+							save_path=psd_save_path+'avgpsd_{}_P_{}.eps'.format( \
+															joints_string[0],phase_index))
+			else:
+				pass
 
 		# plot psd_avg in diff scale levels
 
 		# if not peak in all strides, use 0 array as complement.
-		# complement_arr = np.zeros(freq_series.shape,dtype= float)
+		complement_arr = np.zeros(freq_series.shape,dtype= float)
 
-		# for scale in range(3):
-		# 	phase_index = list(np.array((1,2,3,4))+scale*4)
-		# 	phase_index.insert(0,0) # use no_phase line as comparison
-		# 	psd_avg_scale_level = []
-		# 	for index in phase_index:
-		# 		if peak_count[index]>0:
-		# 			psd_avg_scale_level.append(psd_avg[index]) # this sum now, take average in plot by div total fft_count
-		# 		else:
-		# 			psd_avg_scale_level.append(complement_arr)
-		# 		# psd_avg_scale_level.append(psd_avg[index]) # this sum now, take average in plot by div total fft_count
-		# 	legend = ['no_phase','scl{}_ori_0'.format(scale),'scl{}_ori_pi/4'.format(scale),\
-		# 				'scl{}_ori_pi/2'.format(scale),'scl{}_ori_3pi/4'.format(scale)]
-		# 	n_plot_to_file(run_time = peak_count[phase_index],x=freq_series,y_list=psd_avg_scale_level,\
-		# 					xlabel='Frequency (Hz)', ylabel='Power Spectral Density',\
-		# 					legends = legend,title=' Average PSD of {}_scl{}'.format( \
-		# 												joints_string[0],scale),\
-		# 					plot_path=psd_save_path+'avgpsd_{}_scl{}.eps'.format( \
-		# 												joints_string[0],scale))
+		for scale in range(3):
+			phase_index = list(np.array((1,2,3,4))+scale*4)
+			phase_index.insert(0,0) # use no_phase line as comparison
+			psd_avg_scale_level = []
+			for index in phase_index:
+				if peak_count[index]>0:
+					psd_avg_scale_level.append(psd_avg[index]) # this sum now, take average in plot by div total fft_count
+				else:
+					psd_avg_scale_level.append(complement_arr)
+
+			legend = ['no_phase','scl{}_ori_0'.format(scale),'scl{}_ori_pi/4'.format(scale),\
+						'scl{}_ori_pi/2'.format(scale),'scl{}_ori_3pi/4'.format(scale)]
+			n_plot_to_file(run_time = peak_count[phase_index],x=freq_series,y_list=psd_avg_scale_level,\
+							xlabel='Frequency (Hz)', ylabel='Power Spectral Density',\
+							legends = legend,title=' Average PSD of {}_scl{}'.format( \
+														joints_string[0],scale),\
+							plot_path=psd_save_path+'avgpsd_{}_scl{}.eps'.format( \
+														joints_string[0],scale))
+
 		# write file is_peak_overall.csv
 		print 'writting results into file : is_peak_overall_{}.csv'.format(joints_string[0])
 		csvwriter_ispeak_head =['Phase', 'is_peak', 'freq', 'fall']
@@ -570,7 +533,6 @@ def get_cropped_frames(video,io_video,No_start,frame_num,
 	"""
 
 	video.set_next_frame_index(No_start)
-
 	frames = []
 	while(len(frames)<frame_num):
 		frame = io_video.get_video_frames(video,1,grayscale_on=True)
@@ -639,7 +601,6 @@ def get_phase_images_real(frames,frame_num,filter_on = False):
 	# NOTE: the first and last element of coeff is a array instead of a list (low-pass part and high-pass part)
 
 	size = [frame_size,frame_size,frame_size/2,frame_size/4,frame_size/4]
-	# need to change for video in different scales, [1,1,1/2,1/4,1/4] * original_size
 
 	for i in range(1,num_scale-1):
 		for j in range (0,num_orient):
@@ -671,15 +632,14 @@ if __name__ == "__main__":
 	fft_logger = Logger('fft_logger',level_name)
 	tfd_logger = Logger('tfd_logger',level_name)
 	
+	task_to_process = 'Spiraal_links'
 	folders = util.get_full_path_under_folder('/media/tremor-data/TremorData_split/Tremor_data/')
 	folders = sorted(folders,key=lambda x: (int(re.sub('\D','',x)),x))
-	# folders = util.get_full_path_under_folder('../results/joint_data/T008_Rechts_crop/')
 	video_path_list ,window_size_list, joint_list = [],[],[]
-	for i in range(18,35):
-		video_path = folders[i]+ 'Spiraal_links/' + 'kinect.avi'
-		# video_path = folders[i]+ 'segment_img/Rwri/joint_video.avi'
+	for i in range(0,len(folders)):
+		video_path = folders[i]+ '{}/'.format(task_to_process) + 'kinect.avi'
+
 		if "Rechts" in folders[i]:
-			# video_path = folders[i]+ 'Top_neus_links/' + 'kinect.avi'
 			if os.path.isfile(video_path):
 				video_path_list.append(video_path)
 				joint_list.append([4])
@@ -687,7 +647,6 @@ if __name__ == "__main__":
 			else:
 				pass
 		else:
-			# video_path = folders[i]+ 'Top_neus_rechts/' + 'kinect.avi'
 			if os.path.isfile(video_path):
 				video_path_list.append(video_path)
 				joint_list.append([7])

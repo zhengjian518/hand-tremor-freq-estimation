@@ -19,7 +19,6 @@ class PE_AND_CROP():
     """
     This class is for pose estimation and joint frame crop on Silvia'PC
     """
-
     @staticmethod
     def pe_save_batch(video_path_list):
         """Batch saving process
@@ -36,7 +35,6 @@ class PE_AND_CROP():
             """Save PE confidence matrix, prediction and prediction box to file, 
                 to save eperiment time.
             """
-
             # JOINTS_NUM = 14
             part_str = ["head", "neck", "Rsho", "Relb", "Rwri", "Lsho", "Lelb", "Lwri",\
                          "Rhip", "Rkne", "Rank", "Lhip", "Lkne", "Lank"]
@@ -149,13 +147,13 @@ class PE_AND_CROP():
 if __name__ == '__main__':
     pe_instance = PE_AND_CROP()
 
-#    full_video_list = ['/media/tremor-data/TremorData_split/Tremor_data/T040_Links/Top-top/kinect.avi',
-#	                  '/media/tremor-data/TremorData_split/Tremor_data/T040_Links/Volgen/kinect.avi',]
-    patient_code_folder = '/media/tremor-data/TremorData_split/Tremor_data/T001_Links/'
-    video_task_list = util.get_full_path_under_folder(patient_code_folder)
-    full_video_list=[]
-    for task_path in video_task_list:
-        task_path = task_path + 'kinect.avi'
-        full_video_list.append(task_path)
+    full_video_list = ['/media/tremor-data/TremorData_split/Tremor_data/T003_Links/Extra_taak_–_Tremor/kinect.avi',
+	                  '/media/tremor-data/TremorData_split/Tremor_data/T005_Rechts/Extra_taak_–_links_top/kinect.avi',]
+    # patient_code_folder = '/media/tremor-data/TremorData_split/Tremor_data/T001_Links/'
+    # video_task_list = util.get_full_path_under_folder(patient_code_folder)
+    # full_video_list=[]
+    # for task_path in video_task_list:
+    #     task_path = task_path + 'kinect.avi'
+    #     full_video_list.append(task_path)
     pe_instance.pe_save_batch(full_video_list)
     del pe_instance

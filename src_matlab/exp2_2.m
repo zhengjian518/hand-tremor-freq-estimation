@@ -1,4 +1,4 @@
-% For exp 2.1 Lagrangian freq estimation: pose estimation at all frames + FFT over joints (x,y) ( NO SMOOTH).
+% For exp 2.2 Lagrangian freq estimation: pose estimation at all frames + smooth +  FFT over joints (x,y)
 
 path = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/students/jianzheng/jointData/pathological-tremor-detection-from-video/results/';
 smoothed_path = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/students/jianzheng/smooth_trajectory/';

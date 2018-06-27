@@ -1,5 +1,5 @@
-# this script is used to embed in the kalman tracking for Top_neus tasks
-# take in the raw video with full size and process the croped frames at kalman estimated point.
+# -*- coding: utf-8 -*-
+
 import matplotlib.pyplot as plt
 
 from video import Video

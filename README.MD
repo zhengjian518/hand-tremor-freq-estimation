@@ -1,7 +1,7 @@
 # Phase-Based Method For Tremor Frequency Detection From Video
 The experiment setup is as follows:
 * Exp 1.1) Eulerian freq estimation: pose estimation + tracker + phase-hands + FFT over phase-hands.
-* Exp 1.2) Eulerian freq estimation: pose estimation + tracker + RGB + FFT over RGB.
+* Exp 1.2) Eulerian freq estimation: pose estimation + tracker + gray + FFT over gray.
 Compare exp1.1 with 1.2 to show the effect of phase.
 
 * Exp 2.1) Lagrangian freq estimation: pose estimation at all frames + FFT over joints (x,y) ( NO SMOOTH).
@@ -45,8 +45,8 @@ In the result folders, the 'freq_psd_txt/' folder contains the frequency and PSD
 * freq_result.txt --- The numbers in the first column are counts of strides, the numbers in the second column are frequency results in each temporal window, the numbers in the third column records the channel index for the freq_result in column 2.
 The last row in freq_result.txt records the freq_result for the whole video, the number in column 1 indicates whether it is a peak frequency.
 * psd.txt --- Records a mixed PSD of all channels for the whole video.
-* freq_rgb.txt --- Records the frequency information from RGB channel.
-* psd.txt --- Records the PSD of RGB channel for the whole video.
+* freq_rgb.txt --- Records the frequency information from gray channel.(RGB => grayscale)
+* psd.txt --- Records the PSD of gray channel for the whole video.
 
 3. To get the smoothed trajectory of joint positions overtime for exp2_2, run 
 ```sh

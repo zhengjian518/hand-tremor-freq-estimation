@@ -2,7 +2,7 @@
 
 path = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/students/jianzheng/jointData/pathological-tremor-detection-from-video/results/';
 video_code_list = dir(path);
-results_save_path = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/students/jianzheng/exp_2_1/';
+results_save_path = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/students/jianzheng/exp_2_1_update/';
 if isdir(results_save_path) ==0
     mkdir(results_save_path);
 end
@@ -23,9 +23,9 @@ for i = 3:length(video_code_list)
         mkdir(code_result_save_path);
     end
     if strfind(patient_folder_name,'Links')
-    	joint_number = 7;
+    	joint_number = 8;
     else
-    	joint_number = 4;
+    	joint_number = 5;
     end
 
     task_path = strcat(video_code_list(i).folder,'/',video_code_list(i).name);

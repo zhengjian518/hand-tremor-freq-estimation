@@ -249,7 +249,6 @@ def evaluate_FE_real():
 		NOTICE: this experiment assumes that cropped images or predictions have 
 				been cached (you can use the code in tpd.py to do so).
 	"""
-
 	# 4.1 Pixel-wise method
 	window_size_list = [121]
 	video_code_list = ['T008']
@@ -289,7 +288,7 @@ def evaluate_FE_real():
 
 def test_make_color_ball():
 	"""This is used to test the colorful ball
-		NOTICE: 
+
 	"""    
 	freq_tremor = 6
 	freq_noise = 1
@@ -304,54 +303,14 @@ def test_make_color_ball():
 					noise_sigma=1,ball_radius=8)
 
 def video_preprocess_check():
-	"""This is used to check the video preprocess
-		NOTICE: 
-	"""    
 	video_path = '../results/JETcolor_ball/color_ball.avi'
 	Video_Preprocessing.video_preprocessing(video_path,filter_on = True, norm_mode = 'white_noise_remove',\
 											debug_type = 'norm_mode_debug')
 
 def phase_image_check(filter_type,parameter):
-
-	# image_path = '../phase_image/ori_img.jpg'
-	# im = cv2.imread(image_path)
-	# grayIm = cv2.resize(cv2.cvtColor(im, cv2.COLOR_RGB2GRAY),(30,30),cv2.INTER_AREA)
-	# steer = Steerable()
-	# coeff = steer.buildSCFpyr(grayIm)
-	# phase_emp = coeff[3][1]
-	# angles = np.angle(phase_emp)
-	# print angles
-	# angles = angles + np.pi
-	# print angles
-	# # amp = 255*np.ones((69,143),dtype = int)
-	# # amp = np.abs(phase_emp)
-	# # phase_image = np.uint8(amp * np.exp(angles * 1j).real)
-	# phase_image = np.uint8(cv2.convertScaleAbs(angles,alpha=255.0/(2*np.pi)))
-	# # phase_image = np.uint8(cv2.convertScaleAbs(angles))
-	# print phase_image
-	# save_path = '../phase_image/pha_img.jpg'
-	# cv2.imwrite(save_path,phase_image)
-	# print 'done!!!'
-	# grayIm = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
-	# cv2.imwrite('../phase_image/grayIm.jpg',grayIm)
-	# size = (im.shape[0],im.shape[1])
-	# im = 255*np.random.normal(0, 1.0, size)
-	# img = im + grayIm
-	# cv2.imwrite('../phase_image/noise.jpg',img)
-	# im = cv2.GaussianBlur(img,(0,0),2)
-	# print im
-	# cv2.imwrite('../phase_image/try.jpg',im)
-	# # print phase_image.shape
-
 	image_path = '../phase_image/1.png'
-	# image_path = '../phase_image/1.png'
 	im = cv2.imread(image_path)
-	# size = (im.shape[0],im.shape[1])
-	# noise= 255*np.random.normal(0, 1.0, size)
-	# im = im + noise
-	# print im
-	# print np.uint8(im)
-	# cv2.imwrite('../phase_image/ball-noise.jpg',im)
+
 	if filter_type == 'GaussianBlur':
 		frame_filter = cv2.GaussianBlur(im,(parameter[0],parameter[1]),parameter[2])
 	elif filter_type == 'bilateralFilter':

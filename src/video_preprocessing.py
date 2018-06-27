@@ -58,83 +58,8 @@ class Video_Preprocessing():
 		elif debug_type == 'norm_mode_debug':
 			frames_save_path = video_path
 			path = video_path.split('/')[0]+'/'+video_path.split('/')[1]+'/'+video_path.split('/')[2]+ '/'
-			# out_video = cv2.VideoWriter(path+ '/color_frames/'+ 'preprocessed_color_ball.avi',fourcc, video_to_preprocess.FPS, 
-			# 									(video_width,video_height),isColor = True)
 
 		SAMPLE_FREQ = video_to_preprocess.FPS
-
-		# frames = io_video_instance.get_video_frames(video_to_preprocess,\
-		# 	frame_number,grayscale_on=False)
-		# frames.astype(np.float32)  # easy for FFT
-
-		# # creat an array to store normalized frames 
-		# frames_in_threeChannels = np.ndarray((frame_number,video_height,video_width,3),dtype=np.uint8)
-		# # Do FFT and IFFT on all frames, per channel
-		# for i in range(3):
-		# # for i in [1]:
-		# 	frames_in_oneChannel = frames[:,:,:,i]
-		# 	# frames_in_oneChannel_norm = frames_in_oneChannel
-		# 	frames_in_oneChannel_norm = np.subtract(frames_in_oneChannel, 
-		# 									np.mean(frames_in_oneChannel, axis=0))
-
-		# 	# set normlization mode
-		# 	# FFT
-		# 	if norm_mode == 'opencv_default':
-		# 		frames_in_oneChannel_norm = np.fft.fft(frames_in_oneChannel_norm,axis=0,norm = 'ortho')
-		# 		frames_in_oneChannel_ifft = np.fft.ifft(frames_in_oneChannel_norm, axis=0)
-
-		# 	elif norm_mode == 'noise_remove':
-		# 		# TODO
-		# 		frames_in_oneChannel_norm = np.fft.fft(frames_in_oneChannel_norm,axis=0) # complex
-		# 		power_pixel_fre = np.power(np.abs(frames_in_oneChannel_norm),2)
-		# 		power_sum = np.sum(power_pixel_fre,axis = 0)
-		# 		threshold = 0.2*power_sum/frame_number
-
-		# 		mask = power_pixel_fre>threshold
-		# 		frames_in_oneChannel_norm = frames_in_oneChannel_norm*mask
-
-		# 		ampl = np.absolute(frames_in_oneChannel_norm)
-		# 		ampl_max = np.max(ampl,axis = 0)
-		# 		ampl_min = np.min(ampl,axis = 0)
-		# 		ampl_range = np.subtract(ampl_max,ampl_min)
-		# 		# ampl_range_min = np.min(ampl_range,axis = 0)
-		# 		# print ampl_range_min
-		# 		# ampl_range_max = np.max(np.max(ampl_range,axis = 0),axis=0)
-
-		# 		frames_in_oneChannel_norm = np.true_divide(frames_in_oneChannel_norm,ampl_range)
-		# 		frames_in_oneChannel_ifft = np.fft.ifft(frames_in_oneChannel_norm, axis=0)
-
-		# 		pass
-		# 	elif norm_mode == 'normalization':
-		# 		# TODO
-		# 		frames_in_oneChannel_norm = np.fft.fft(frames_in_oneChannel_norm,axis=0) # complex
-		# 		ampl = np.absolute(frames_in_oneChannel_norm)
-		# 		ampl_max = np.max(ampl,axis = 0)
-		# 		ampl_min = np.min(ampl,axis = 0)
-		# 		ampl_range = np.subtract(ampl_max,ampl_min)
-		# 		frames_in_oneChannel_norm = np.true_divide(frames_in_oneChannel_norm,ampl_range)
-		# 		frames_in_oneChannel_ifft = np.fft.ifft(frames_in_oneChannel_norm, axis=0)*100
-		# 		pass
-			
-		# 	# make pixel value 0-255
-		# 	# frames_in_oneChannel_ifft = frames_in_oneChannel_ifft.real
-		# 	# min_pixel = np.min(frames_in_oneChannel_ifft,axis = 0)
-		# 	# frames_in_oneChannel_ifft -= min_pixel
-		# 	# frames_in_oneChannel_ifft *= 255.0/frames_in_oneChannel_ifft.max(axis = 0) 
-
-		# 	frames_in_threeChannels[:,:,:,i] = frames_in_oneChannel_ifft.real.astype(np.uint8) # cast to uint8 datatype
-		# 	# frames_in_threeChannels[:,:,:,i] = frames_in_oneChannel_ifft.astype(np.uint8) # cast to uint8 datatype
-	
-
-		# # make imgs and video
-		# for i in range(frame_number):
-		# 	single_img_BGR = frames_in_threeChannels[i,:,:,:]
-		# 	single_img_GRAY = cv2.cvtColor(single_img_BGR,cv2.COLOR_BGR2GRAY)
-		# 	cv2.imwrite(frames_save_path+'{}.png'.format(i),single_img_GRAY)
-		# 	# cv2.imwrite(frames_save_path+'{}.png'.format(i),frame,cv2.LOAD_IMAGE_COLOR)
-		# 	out_video.write(np.uint8(single_img_BGR))
-
-
 
 		# # read in grayscale images
 
@@ -160,25 +85,15 @@ class Video_Preprocessing():
 			threshold = 0.01*power_sum/frame_number
 
 			mask = power_pixel_fre>threshold
-			# print 'below is mask'
-			# print mask
 			frames_in_gray_norm = frames_in_gray_norm*mask
 
 			ampl = np.absolute(frames_in_gray_norm)
-			# ampl_max = np.max(ampl,axis = 0)
-			# ampl_min = np.min(ampl,axis = 0)
-			# ampl_range = np.subtract(ampl_max,ampl_min)
-
 			frames_in_gray_norm = np.true_divide(frames_in_gray_norm,ampl)
 			frames_in_gray_norm = np.fft.ifft(frames_in_gray_norm, axis=0)
 
 		elif norm_mode == 'normalization':
 			frames_in_gray_norm = np.fft.fft(frames_in_gray_norm,axis=0) # complex
 			ampl = np.absolute(frames_in_gray_norm)
-			# ampl_max = np.max(ampl,axis = 0)
-			# ampl_min = np.min(ampl,axis = 0)
-			# ampl_range = np.subtract(ampl_max,ampl_min)
-			# ampl_range = np.ones(frames_in_gray_norm.shape, dtype = int)
 			frames_in_gray_norm = np.true_divide(frames_in_gray_norm,ampl)
 			frames_in_gray_norm = np.fft.ifft(frames_in_gray_norm, axis=0)
 
@@ -187,18 +102,9 @@ class Video_Preprocessing():
 
 		# make pixel value 0-255
 		frames_in_gray_norm = frames_in_gray_norm.real
-		# print 'below is real part'
-		# print frames_in_gray_norm
 		min_pixel = np.min(frames_in_gray_norm,axis = 0)
 		frames_in_gray_norm -= min_pixel
-		# print 'below is minimum'
-		# print frames_in_gray_norm
-
-		# pixel_value_nozero = 
 		frames_in_gray_norm *= 255.0/frames_in_gray_norm.max(axis = 0)
-		# print 'below is maximum'
-		# print frames_in_gray_norm
-		# frames_in_threeChannels[:,:,:,i] = frames_in_oneChannel_ifft.real.astype(np.uint8) # cast to uint8 datatype
 		frames_in_gray = frames_in_gray_norm.astype(np.uint8)
 
 		# make imgs and video
@@ -223,8 +129,6 @@ class Video_Preprocessing():
 		frames = io_video_instance.get_video_frames(video_to_preprocess,\
 			frame_number,grayscale_on=True)
 		frames.astype(np.float32)  # easy for FFT
-		# segment_img_path = ball_path
-		# phaseImg_path = segment_img_path + 'phaseImg/'
 
 		# set video writer 
 		fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -284,10 +188,7 @@ class Video_Preprocessing():
 					angles = np.angle(phase_emp)
 					amp = 1*np.ones((hight,width),dtype = int)
 					phase_image = amp * np.exp(angles * 1j).real
-					
-					# phase_image = np.uint8(cv2.convertScaleAbs(angles,alpha=255.0/np.pi))
-					# phase_image = np.uint8(cv2.convertScaleAbs((angles+np.pi),alpha=255.0/(2*np.pi)))
-					# phase_image = cv2.GaussianBlur(phase_image,(0,0),5)
+
 					phase_image = np.uint8(cv2.convertScaleAbs((phase_image+1.0),alpha=255.0/2.0))
 					write_path =save_path + '{}.png'.format(k)
 					cv2.imwrite(write_path,phase_image)

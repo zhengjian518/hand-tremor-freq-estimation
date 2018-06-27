@@ -71,13 +71,6 @@ class PE_AND_CROP():
                     np.savetxt(prediction_arr_path+'pred_{}.txt'.format(\
                                             video_pe.next_frame_index),prediction)
 
-                    # if box_size is None:
-                    #     box_size = math.sqrt( math.pow(\
-                    #                             prediction[0,0]-prediction[1,0],2)+\
-                    #                          math.pow(\
-                    #                             prediction[0,1]-prediction[1,1],2) )
-                    #     box_size = int( box_size/2)
-
                     for joint_i in [JOINTS_NUM]:
                         # TODO: may have bug - box is out of image
                         pred_y = int(prediction[joint_i,0])
